@@ -1,0 +1,106 @@
+.sidebar {
+  width: 250px; /* Expanded width */
+  height: 100vh; /* Full viewport height */
+  background-color: #343a40;
+  color: white;
+  position: fixed; /* Fix it to the left side */
+  top: 0; /* Start at the top */
+  left: 0; /* Align to the left edge */
+  overflow: hidden;
+  transition: width 0.3s ease;
+
+  &.collapsed {
+    width: 64px; /* Collapsed width */
+
+    /* Center the menu items and arrow */
+    .menu {
+      align-items: center; /* Center images horizontally */
+    }
+
+    .menu li a {
+      justify-content: center; /* Center icons in collapsed state */
+    }
+  }
+
+  .toggle-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+
+    &.justify-between {
+      justify-content: space-between; /* Spread text and emoji */
+    }
+
+    /* Center arrow in collapsed state */
+    &.justify-center {
+      justify-content: center; /* Center content horizontally */
+    }
+  }
+
+  .menu {
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
+    display: flex;
+    flex-direction: column;
+
+    li {
+      display: flex;
+      align-items: center;
+      padding: 10px 10px;
+
+      a {
+        display: flex;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+        width: 100%;
+
+        /* Default alignment for expanded mode */
+        &.justify-between {
+          justify-content: space-between; /* Spread content */
+        }
+
+        /* Center alignment for collapsed mode */
+        &.justify-center {
+          justify-content: center; /* Center content */
+        }
+
+        .icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 50%;
+          flex-shrink: 0; /* Prevent shrinking */
+        }
+
+        .item-details {
+          display: flex;
+          flex-direction: column;
+          margin-left: 10px;
+          width: 100%; /* Ensure it takes available space */
+        }
+
+        .title {
+          white-space: nowrap; /* Prevent text wrapping */
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .viewers {
+          font-size: 14px;
+          color: #cccccc;
+        }
+      }
+      &:hover {
+        background-color: #495057;
+        border-radius: 5px;
+      }
+    }
+  }
+}

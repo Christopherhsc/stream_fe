@@ -1,0 +1,9 @@
+.content {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+  background-color: black;
+
+  &.sidebar-collapsed {
+    margin-left: 64px;
+  }
+}

@@ -1,0 +1,25 @@
+<div class="sidebar" [class.collapsed]="isCollapsed">
+  <button 
+    class="toggle-btn" 
+    (click)="toggleSidebar()" 
+    [class.justify-between]="!isCollapsed" 
+    [class.justify-center]="isCollapsed">
+    <span *ngIf="!isCollapsed">Streamers World</span>
+    <span>{{ isCollapsed ? '➡️' : '⬅️' }}</span>
+  </button>
+  <ul class="menu">
+    <!-- Dynamically render list items -->
+    <li *ngFor="let item of data">
+      <a 
+        href="#" 
+        [class.justify-between]="!isCollapsed" 
+        [class.justify-center]="isCollapsed">
+        <div class="item-details" *ngIf="!isCollapsed">
+          <span class="title">{{ item.title }}</span>
+          <span class="viewers">({{ item.viewers }} viewers)</span>
+        </div>
+        <img [src]="item.image" alt="{{ item.title }}" class="icon" />
+      </a>
+    </li>
+  </ul>
+</div>
