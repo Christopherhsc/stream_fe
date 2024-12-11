@@ -1,17 +1,19 @@
-<div class="sidebar custom-sidebar" [class.collapsed]="isCollapsed">
+<div class="sidebar" [class.collapsed]="isCollapsed">
   <button
     class="toggle-btn"
     (click)="toggleSidebar()"
     [class.justify-between]="!isCollapsed"
     [class.justify-center]="isCollapsed"
   >
-    <span *ngIf="!isCollapsed">Streamers World</span>
-    <mat-icon>{{ isCollapsed ? 'chevron_right' : 'chevron_left' }}</mat-icon>
+    <span class="sidebar-title" *ngIf="!isCollapsed" [@titleAnimation]>
+      Streamers World
+    </span>
+    <mat-icon>{{ isCollapsed ? "chevron_right" : "chevron_left" }}</mat-icon>
   </button>
   <ul class="menu">
     <li *ngFor="let item of data">
       <a
-        (click)="toggleSubMenu(item, submenu)"
+        (click)="toggleSubMenu(item)"
         [class.justify-between]="!isCollapsed"
         [class.justify-center]="isCollapsed"
       >
@@ -22,10 +24,10 @@
         <img [src]="item.image" alt="{{ item.title }}" class="icon" />
       </a>
       <!-- Submenu -->
-      <ul #submenu class="sub-menu">
+      <ul class="sub-menu" [class.expanded]="isExpanded(item)">
         <li *ngFor="let subItem of item.subMenu">
-          <a href="#">
-            <div class="item-details">
+          <a [routerLink]="subItem.url">
+            <div class="item-details" *ngIf="!isCollapsed">
               <span class="title">{{ subItem.title }}</span>
               <span class="viewers">({{ subItem.viewers }} viewers)</span>
             </div>
@@ -35,5 +37,4 @@
       </ul>
     </li>
   </ul>
-  
 </div>

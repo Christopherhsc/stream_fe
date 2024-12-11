@@ -1,4 +1,4 @@
-.custom-sidebar {
+.sidebar {
   width: 250px;
   height: 100vh;
   background-color: #343a40;
@@ -33,6 +33,16 @@
     }
   }
 
+  .sidebar-title {
+    font-size: 24px;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
+    transition: text-shadow 0.3s ease;
+
+    &:hover {
+      text-shadow: 0 0 12px rgba(255, 255, 255, 1);
+    }
+  }
+
   .menu {
     list-style: none;
     margin: 0;
@@ -62,7 +72,6 @@
           width: 40px;
           height: 40px;
           border-radius: 50%;
-          margin-right: 10px;
         }
 
         .item-details {
@@ -70,57 +79,70 @@
           margin-left: 10px;
           display: flex;
           flex-direction: column;
+
+          .title {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 160px;
+            display: block;
+          }
         }
 
         &:hover {
-          background-color: #495057; /* Same as sub-menu hover */
-          border-radius: 5px; /* Match sub-menu hover */
+          background-color: #495057;
+          border-radius: 5px;
         }
       }
 
       .sub-menu {
         list-style: none;
         padding-left: 20px;
-        max-height: 0; /* Start collapsed */
+        padding-right: 20px;
+        max-height: 0;
         overflow: hidden;
-        opacity: 0; /* Start invisible */
-        transition: max-height 0.3s ease, opacity 0.3s ease;
-      
-        /* Ensure visibility when expanded */
+        opacity: 0;
+        transition: max-height 0.5s ease, opacity 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+
         &.expanded {
-          max-height: none; /* Allow it to dynamically adjust height */
-          opacity: 1; /* Make visible */
+          max-height: none;
+          opacity: 1;
+          width: 100%;
         }
-      
-      
+
         li {
           display: flex;
-      
+          width: 100%;
+
           a {
             display: flex;
             align-items: center;
-            padding: 5px 0;
-      
+
             .icon {
               width: 30px;
               height: 30px;
-              margin-right: 10px;
             }
-      
+
             .item-details {
               flex: 1;
-              margin-left: 10px;
             }
-          }
-      
-          &:hover {
-            background-color: #495057;
-            border-radius: 5px;
+
+            &:hover {
+              background-color: #495057;
+              border-radius: 5px;
+            }
           }
         }
       }
-      
-      
     }
   }
+}
+
+.sidebar.collapsed .sub-menu li a {
+  justify-content: center; /* Center the content horizontally */
 }

@@ -11,11 +11,13 @@ export const sidebarData = [
         title: 'OnlyFangs',
         image: getRandomImage(),
         viewers: 32,
+        url: '/dashboard/stats'
       },
       {
         title: 'Method',
         image: getRandomImage(),
         viewers: 15,
+        url: '/dashboard/stats'
       },
     ],
   },
@@ -23,34 +25,10 @@ export const sidebarData = [
     title: 'TrackMania',
     image: getRandomImage(),
     viewers: 12,
-    subMenu: [
-      {
-        title: 'OnlyFangs',
-        image: getRandomImage(),
-        viewers: 32,
-      },
-      {
-        title: 'Method',
-        image: getRandomImage(),
-        viewers: 15,
-      },
-    ],
   },
   {
     title: 'League of Legends',
     image: getRandomImage(),
     viewers: 3,
-    subMenu: [
-      {
-        title: 'OnlyFangs',
-        image: getRandomImage(),
-        viewers: 32,
-      },
-      {
-        title: 'Method',
-        image: getRandomImage(),
-        viewers: 15,
-      },
-    ],
   },
 ];
