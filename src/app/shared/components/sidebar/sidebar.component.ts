@@ -1,7 +1,7 @@
 import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { sidebarData } from './sidebar-data';
+import { componentData } from '../../data/component-data';
 import { RouterModule } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
 
@@ -26,7 +26,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 export class SidebarComponent {
   @Output() collapsedChange = new EventEmitter<boolean>();
   expandedItems = new Set<any>();
-  data = sidebarData;
+  data = componentData;
   isCollapsed = false;
 
   constructor(private elementRef: ElementRef) {}

@@ -1,7 +1,10 @@
 const getRandomImage = (): string =>
   `https://picsum.photos/40?random=${Math.floor(Math.random() * 1000)}`;
 
-export const sidebarData = [
+const getRandomHeaderImage = (): string =>
+  `https://picsum.photos/1200?random=${Math.floor(Math.random() * 1000)}`;
+
+export const componentData = [
   {
     title: 'World of Warcraft',
     image: getRandomImage(),
@@ -9,13 +12,14 @@ export const sidebarData = [
     subMenu: [
       {
         title: 'OnlyFangs',
-        image: getRandomImage(),
+        iconImage: getRandomImage(),
+        headerImage: '/assets/onlyfangs.png',
         viewers: 32,
-        url: '/dashboard/stats'
+        url: '/onlyfangs'
       },
       {
         title: 'Method',
-        image: getRandomImage(),
+        iconImage: getRandomImage(),
         viewers: 15,
         url: '/dashboard/stats'
       },

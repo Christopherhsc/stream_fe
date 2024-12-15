@@ -1,7 +1,6 @@
 <div>
   <app-sidebar (collapsedChange)="onSidebarToggle($event)"></app-sidebar>
   <div class="content" [class.sidebar-collapsed]="isSidebarCollapsed">
-    <h1>hello world</h1>
-    <router-outlet></router-outlet>
+    <app-submenu-content-display></app-submenu-content-display>
   </div>
 </div>

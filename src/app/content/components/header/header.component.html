@@ -1,0 +1,18 @@
+<div
+  class="header"
+  [ngStyle]="{
+    'background-image':
+      'url(' + (headerData?.headerImage || '/assets/fallback.jpg') + ')'
+  }"
+>
+  <div class="header-content">
+    <span class="header-title">{{ headerData?.title || "Default Title" }}</span>
+    <span
+      *ngIf="headerData?.viewers !== null && headerData?.viewers !== undefined"
+      class="header-viewers"
+    >
+      {{ headerData?.viewers }}
+      <mat-icon>visibility</mat-icon>
+    </span>
+  </div>
+</div>

@@ -1,10 +1,13 @@
 import { Component, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
+import { HeaderComponent } from "./content/components/header/header.component";
+import { StreamsComponent } from "./content/components/streams/streams.component";
+import { SubmenuContentDisplayComponent } from "./content/submenu-content-display/submenu-content-display.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SidebarComponent],
+  imports: [RouterOutlet, SidebarComponent, SubmenuContentDisplayComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
