@@ -15,11 +15,6 @@ import { StreamsComponent } from "../components/streams/streams.component";
   imports: [CommonModule, MatIconModule, HeaderComponent, StreamsComponent]
 })
 export class SubmenuContentDisplayComponent implements OnInit {
-  // State for HeaderComponent
-  headerData: { headerImage: string; title: string; viewers: number | null } | null = null;
-
-  // State for StreamsComponent
-  streamsData: any = null;
 
   constructor(private router: Router) {}
 
@@ -31,6 +26,9 @@ export class SubmenuContentDisplayComponent implements OnInit {
         this.updateComponentData(url);
       });
   }
+  headerData: { headerImage: string; title: string; viewers: number | null } | null = null;
+  streamsData: any = null;
+  backgroundColor: string = 'rgb(44, 44, 44)'; // Default background color
 
   updateComponentData(url: string): void {
     const matchedItem = componentData.flatMap((item) => item.subMenu || [])
@@ -42,7 +40,7 @@ export class SubmenuContentDisplayComponent implements OnInit {
         title: matchedItem.title || 'Default Title',
         viewers: matchedItem.viewers || null,
       };
-      this.streamsData = matchedItem; // Pass the entire matched object for StreamsComponent
+      this.streamsData = matchedItem;
     } else {
       this.headerData = {
         headerImage: '/assets/fallback.jpg',
@@ -51,5 +49,9 @@ export class SubmenuContentDisplayComponent implements OnInit {
       };
       this.streamsData = null;
     }
+  }
+
+  onDominantColorChange(color: string): void {
+    this.backgroundColor = color; // Update the background color
   }
 }

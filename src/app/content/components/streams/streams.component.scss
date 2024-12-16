@@ -1,10 +1,11 @@
-.streams{
+.streams {
     background-color: rgb(44, 44, 44);
     height: 100%;
     padding: 2.5%;
     margin: 0;
     box-sizing: border-box;
-
-
     color: white;
-}
+  
+    transition: background-color 1s ease-in-out; // Smooth transition effect
+  }
+  

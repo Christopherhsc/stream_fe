@@ -15,17 +15,19 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 100%;
-    background: linear-gradient(to top, rgb(44, 44, 44), transparent);
-    z-index: 1;
+    height: 50%; // Control how much darkness is applied
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+    z-index: 1; // Ensures gradient is layered above the background image
+    pointer-events: none; // Ensures clicks pass through the gradient
   }
 
   .header-content {
-    z-index: 2; /* Ensures content is above the gradient */
+    z-index: 2;
+    /* Ensures content is above the gradient */
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Align items to the left */
-    gap: 5px; /* Adds spacing between title and viewers */
+    align-items: flex-start;
+    gap: 5px;
   }
 
   .header-title {
@@ -37,8 +39,10 @@
   .header-viewers {
     display: flex;
     align-items: center;
-    gap: 5px; /* Add some spacing between the icon and the text */
-    color: rgba(0, 174, 255, 0.8); /* Slightly transparent white */
+    gap: 5px;
+    /* Add some spacing between the icon and the text */
+    color: rgba(0, 174, 255, 0.8);
+    /* Slightly transparent white */
     font-size: 1rem;
   }
 }

@@ -2,9 +2,17 @@
   class="header"
   [ngStyle]="{
     'background-image':
-      'url(' + (headerData?.headerImage || '/assets/fallback.jpg') + ')'
+      'url(' + (headerData?.headerImage || '/assets/fallback.jpg') + ')',
+    '--dominant-color': dominantColor
   }"
 >
+  <div
+    class="header-gradient"
+    [ngStyle]="{
+      background: 'linear-gradient(to top, ' + dominantColor + ', transparent)'
+    }"
+  ></div>
+
   <div class="header-content">
     <span class="header-title">{{ headerData?.title || "Default Title" }}</span>
     <span
