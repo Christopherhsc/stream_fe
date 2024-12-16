@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output, SimpleChanges, OnChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  SimpleChanges,
+  OnChanges,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import ColorThief from 'colorthief';
@@ -8,7 +15,7 @@ import ColorThief from 'colorthief';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 
-  imports: [CommonModule, MatIconModule]
+  imports: [CommonModule, MatIconModule],
 })
 export class HeaderComponent implements OnChanges {
   @Input() headerData: {
@@ -18,6 +25,7 @@ export class HeaderComponent implements OnChanges {
   } | null = null;
 
   @Output() dominantColor = new EventEmitter<string>();
+  localDominantColor: string = 'rgba(0, 0, 0, 1)';
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['headerData'] && this.headerData?.headerImage) {
@@ -29,12 +37,19 @@ export class HeaderComponent implements OnChanges {
     const image = new Image();
     image.crossOrigin = 'Anonymous'; // Required for cross-origin images
     image.src = this.headerData?.headerImage || '/assets/fallback.jpg';
-
+  
     image.onload = () => {
       const colorThief = new ColorThief();
       const color = colorThief.getColor(image); // Returns [R, G, B]
       const rgb = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-      this.dominantColor.emit(rgb); // Emit the RGB color string
+      const rgba = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 1)`; // Alpha value is 1 (fully opaque)
+  
+      console.log('RGB COLOR:', rgb);
+      console.log('RGBA COLOR:', rgba);
+  
+      this.dominantColor.emit(rgb); // Emit for external components
+      this.localDominantColor = rgba; // Store locally for gradient
     };
   }
+  
 }

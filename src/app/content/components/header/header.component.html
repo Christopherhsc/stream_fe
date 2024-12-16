@@ -2,14 +2,14 @@
   class="header"
   [ngStyle]="{
     'background-image':
-      'url(' + (headerData?.headerImage || '/assets/fallback.jpg') + ')',
-    '--dominant-color': dominantColor
+      'url(' + (headerData?.headerImage || '/assets/fallback.jpg') + ')'
   }"
 >
   <div
     class="header-gradient"
     [ngStyle]="{
-      background: 'linear-gradient(to top, ' + dominantColor + ', transparent)'
+      background:
+        'linear-gradient(to top, ' + localDominantColor + ', transparent)'
     }"
   ></div>
 
