@@ -44,9 +44,6 @@ export class HeaderComponent implements OnChanges {
       const rgb = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
       const rgba = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 1)`; // Alpha value is 1 (fully opaque)
   
-      console.log('RGB COLOR:', rgb);
-      console.log('RGBA COLOR:', rgba);
-  
       this.dominantColor.emit(rgb); // Emit for external components
       this.localDominantColor = rgba; // Store locally for gradient
     };

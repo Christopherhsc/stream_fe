@@ -1,9 +1,10 @@
-import { Component, ElementRef, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { sidebarData } from '../../data/sidebar-data';
 import { RouterModule } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { ViewerService } from '../../services/viewer.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -23,13 +24,23 @@ import { trigger, transition, style, animate } from '@angular/animations';
     ]),
   ],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   @Output() collapsedChange = new EventEmitter<boolean>();
   expandedItems = new Set<any>();
   data = sidebarData;
   isCollapsed = false;
 
-  constructor(private elementRef: ElementRef) {}
+  constructor(private elementRef: ElementRef, private viewerService: ViewerService) {}
+
+  ngOnInit(): void {
+    const allStreamers = this.getAllStreamers();
+    this.viewerService.fetchViewerCounts(allStreamers);
+
+    // Subscribe to viewer counts
+    this.viewerService.viewers$.subscribe((viewerCounts) => {
+      this.updateViewerCounts(viewerCounts);
+    });
+  }
 
   toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;
@@ -74,4 +85,29 @@ export class SidebarComponent {
   isExpanded(item: any): boolean {
     return this.expandedItems.has(item);
   }
+
+  private getAllStreamers(): string[] {
+    // Collect all streamer names from submenus
+    return this.data.flatMap((item) =>
+      item.subMenu?.flatMap((subItem) => subItem.title) || []
+    );
+  }
+  private updateViewerCounts(viewerCounts: Record<string, number>): void {
+    this.data.forEach((item) => {
+      let totalViewers = 0;
+  
+      // Update subMenu viewer counts and aggregate to parent
+      item.subMenu?.forEach((subItem) => {
+        const titleKey = subItem.title.trim().toLowerCase(); // Normalize title
+        const count = viewerCounts[titleKey] || 0; // Fetch viewer count
+        subItem.viewers = count;
+        totalViewers += count;
+      });
+  
+      item.viewers = totalViewers; // Update total viewers for parent item
+    });
+  
+    console.log('Updated Viewer Counts:', this.data);
+  }
+  
 }

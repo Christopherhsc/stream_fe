@@ -13,6 +13,7 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { interval, Observable, of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-streams',
@@ -33,8 +34,8 @@ export class StreamsComponent implements OnInit {
     embedUrl: SafeResourceUrl;
   }> = [];
 
-  private clientId = 'wae0y5dpmnbmqbckcvo5ewaye7ucrt';
-  private accessToken = 'm8ykf6oyyxsgtdngo6o3htnwggbn74';
+  private clientId = environment.twitchClientId;
+  private accessToken = environment.twitchAccessToken;
   private pollingSubscription: Subscription | null = null;
 
   constructor(
@@ -44,10 +45,9 @@ export class StreamsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Initialize filteredStreamers with embed URLs
     this.filteredStreamers = this.streamers.map((streamer) => ({
       ...streamer,
-      viewers: 0, // Default viewers to 0
+      viewers: 0,
       embedUrl: this.getTwitchEmbedUrl(streamer.name),
     }));
 
@@ -101,11 +101,11 @@ export class StreamsComponent implements OnInit {
         switchMap((response) => {
           const liveStreams = response?.data || [];
 
-          // Update viewer counts only
           this.filteredStreamers.forEach((streamer) => {
             const liveStream = liveStreams.find(
               (s: any) =>
-                s.user_name.trim().toLowerCase() === streamer.name.trim().toLowerCase() &&
+                s.user_name.trim().toLowerCase() ===
+                  streamer.name.trim().toLowerCase() &&
                 s.game_name.toLowerCase() === 'world of warcraft' &&
                 s.type === 'live'
             );
