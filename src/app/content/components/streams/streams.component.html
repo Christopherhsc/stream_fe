@@ -1,4 +1,22 @@
 <div class="streams" [ngStyle]="{ 'background-color': backgroundColor }">
-    <span>Streams works!</span>
-  </div>
-  
+  <ng-container *ngIf="filteredStreamers.length > 0; else noStreamers">
+    <div class="grid-container">
+      <div *ngFor="let streamer of filteredStreamers" class="streamer">
+        <!-- Twitch Stream Embed -->
+        <iframe
+          #twitchIframe
+          [src]="getTwitchEmbedUrl(streamer.name)"
+          height="220"
+          width="400"
+          frameborder="0"
+          allowfullscreen
+        ></iframe>
+        <!-- Streamer Details -->
+        <a [href]="streamer.url" target="_blank">{{ streamer.name }}</a>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #noStreamers>
+    <span>No streamers available.</span>
+  </ng-template>
+</div>

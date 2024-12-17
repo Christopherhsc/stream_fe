@@ -1,4 +1,13 @@
 <div class="submenu-container">
-  <app-header [headerData]="headerData" (dominantColor)="onDominantColorChange($event)"></app-header>
-  <app-streams [backgroundColor]="backgroundColor"></app-streams>
+  <!-- Pass header data to app-header -->
+  <app-header
+    [headerData]="headerData"
+    (dominantColor)="onDominantColorChange($event)"
+  ></app-header>
+
+  <!-- Pass background color and streamers list to app-streams -->
+  <app-streams
+    [backgroundColor]="backgroundColor"
+    [streamers]="streamsData"
+  ></app-streams>
 </div>
