@@ -11,13 +11,13 @@ export const sidebarData = [
         title: 'OnlyFangs',
         iconImage: getRandomImage(),
         headerImage: '/assets/onlyfangs.png',
-        viewers: 32,
+        viewers: 0,
         url: '/onlyfangs',
       },
       {
         title: 'Method',
         iconImage: getRandomImage(),
-        viewers: 15,
+        viewers: 0,
         url: '/dashboard/stats'
       },
     ],

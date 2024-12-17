@@ -10,9 +10,36 @@
   max-height: 100%; // Ensure it respects the available container height
   overflow-y: auto; // Add vertical scrolling when content overflows
 
+  .controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+  
+    button {
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  
+      &:hover {
+        background-color: #5a6268;
+      }
+    }
+  }
+  
+  .viewers-count {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #ccc;
+  }
+  
+
   .grid-container {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); // Auto-fit based on available space
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); // Auto-fit based on available space
     gap: 1rem; // Spacing between grid items
     justify-items: center; // Center items horizontally
   }

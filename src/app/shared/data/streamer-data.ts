@@ -4,29 +4,24 @@ export const streamerData = [
     group: 'OnlyFangs',
     streamers: [
       {
-        name: 'Emilya42',
+        name: 'PirateSoftware',
         image: 'https://picsum.photos/40?random=...',
-        url: '/streamer1',
       },
       {
-        name: 'Pikabooirl',
+        name: 'Xaryu',
         image: 'https://picsum.photos/40?random=...',
-        url: '/streamer2',
       },
       {
-        name: 'Bean',
+        name: 'summit1g',
         image: 'https://picsum.photos/40?random=...',
-        url: '/streamer2',
       },
       {
-        name: 'Sequisha',
+        name: 'KungenTV',
         image: 'https://picsum.photos/40?random=...',
-        url: '/streamer2',
       },
       {
-        name: 'Notmes',
+        name: 'watchmeblink',
         image: 'https://picsum.photos/40?random=...',
-        url: '/streamer2',
       },
     ],
   },
