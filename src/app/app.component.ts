@@ -1,13 +1,17 @@
-import { Component, ViewChild, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import {
+  Component,
+  ViewChild,
+  AfterViewInit,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { SidebarComponent } from './shared/components/sidebar/sidebar.component';
-import { SubmenuContentDisplayComponent } from "./content/submenu-content-display/submenu-content-display.component";
+import { Maincomponent } from './content/components/main.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, SidebarComponent, SubmenuContentDisplayComponent],
+  imports: [SidebarComponent, Maincomponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements AfterViewInit {
   @ViewChild(SidebarComponent) sidebar!: SidebarComponent;

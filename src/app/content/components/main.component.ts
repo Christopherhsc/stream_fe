@@ -4,19 +4,19 @@ import { filter } from 'rxjs/operators';
 import { sidebarData } from '../../shared/data/sidebar-data';
 import { streamerData } from '../../shared/data/streamer-data';
 import { ViewerService } from '../../shared/services/streamerData.service';
-import { HeaderComponent } from '../components/header/header.component';
-import { StreamsComponent } from '../components/streams/streams.component';
+import { HeaderComponent } from './header/header.component';
+import { StreamsComponent } from './streams/streams.component';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
-  selector: 'app-submenu-content-display',
-  templateUrl: './submenu-content-display.component.html',
-  styleUrls: ['./submenu-content-display.component.scss'],
+  selector: 'app-main-content',
+  templateUrl: './main.component.html',
+  styleUrls: ['./main.component.scss'],
   imports: [CommonModule, MatIconModule, HeaderComponent, StreamsComponent],
 })
-export class SubmenuContentDisplayComponent implements OnInit {
+export class Maincomponent implements OnInit {
   headerData: {
     headerImage: string;
     title: string;
@@ -69,7 +69,7 @@ export class SubmenuContentDisplayComponent implements OnInit {
 
       // Fetch viewer counts for the group
       this.isLoading = true;
-      this.viewerService.fetchViewerCounts(matchedItem.title);
+      this.viewerService.fetchViewerData(matchedItem.title);
       this.viewerService.viewers$.subscribe((viewerData) => {
         this.updateFilteredStreamers(viewerData);
 
@@ -97,9 +97,9 @@ export class SubmenuContentDisplayComponent implements OnInit {
 
   updateFilteredStreamers(viewerData: Record<string, any>): void {
     const existingStreamerMap = new Map(
-      this.filteredStreamers.map((streamer) => [streamer.name, streamer]) 
+      this.filteredStreamers.map((streamer) => [streamer.name, streamer])
     );
-  
+
     // Update viewer counts for existing streamers
     this.filteredStreamers.forEach((streamer) => {
       const liveData = viewerData[streamer.name];
@@ -109,15 +109,15 @@ export class SubmenuContentDisplayComponent implements OnInit {
         streamer.viewers = 0; // Mark streamer as offline
       }
     });
-  
+
     // Remove offline streamers
     this.filteredStreamers = this.filteredStreamers.filter(
       (streamer) => streamer.viewers > 0
     );
-  
+
     // Add new streamers from the fetched data
     const newStreamers = Object.entries(viewerData)
-      .filter(([key]) => !existingStreamerMap.has(key)) 
+      .filter(([key]) => !existingStreamerMap.has(key))
       .map(([key, liveData]: [string, any]) => ({
         name: key,
         viewers: liveData.viewer_count,
@@ -125,14 +125,14 @@ export class SubmenuContentDisplayComponent implements OnInit {
         title: liveData.title,
         embedUrl: this.getTwitchEmbedUrl(key),
       }));
-  
+
     this.filteredStreamers.push(...newStreamers);
-  
+
     // Reapply the current sort if necessary
     if (this.currentSort === 'viewers') {
       this.filteredStreamers.sort((a, b) => b.viewers - a.viewers);
     }
-  }  
+  }
 
   getTwitchEmbedUrl(channelName: string): SafeResourceUrl {
     const domain = window.location.hostname;

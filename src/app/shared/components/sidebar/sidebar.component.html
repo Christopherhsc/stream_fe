@@ -6,7 +6,7 @@
     [class.justify-center]="isCollapsed"
   >
     <span class="sidebar-title" *ngIf="!isCollapsed" [@titleAnimation]>
-      Streamers World
+      Stream FOMO
     </span>
     <mat-icon>{{ isCollapsed ? "chevron_right" : "chevron_left" }}</mat-icon>
   </button>
@@ -19,7 +19,6 @@
       >
         <div class="item-details" *ngIf="!isCollapsed">
           <span class="title">{{ item.title }}</span>
-          <span class="viewers">({{ item.viewers }} viewers)</span>
         </div>
         <img [src]="item.image" alt="{{ item.title }}" class="icon" />
       </a>
@@ -29,9 +28,12 @@
           <a [routerLink]="subItem.url">
             <div class="item-details" *ngIf="!isCollapsed">
               <span class="title">{{ subItem.title }}</span>
-              <span class="viewers">({{ subItem.viewers }} viewers)</span>
             </div>
-            <img [src]="subItem.iconImage" alt="{{ subItem.title }}" class="icon" />
+            <img
+              [src]="subItem.iconImage"
+              alt="{{ subItem.title }}"
+              class="icon"
+            />
           </a>
         </li>
       </ul>

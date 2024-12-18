@@ -10,7 +10,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { sidebarData } from '../../data/sidebar-data';
 import { RouterModule } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { ViewerService } from '../../services/streamerData.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -30,26 +29,13 @@ import { ViewerService } from '../../services/streamerData.service';
     ]),
   ],
 })
-export class SidebarComponent implements OnInit {
+export class SidebarComponent {
   @Output() collapsedChange = new EventEmitter<boolean>();
   expandedItems = new Set<any>();
   data = sidebarData;
   isCollapsed = false;
 
-  constructor(
-    private elementRef: ElementRef,
-    private viewerService: ViewerService
-  ) {}
-
-  ngOnInit(): void {
-    const defaultGroup = this.data[0]?.subMenu?.[0]?.title || null; // Select the first group's title as default
-    this.viewerService.fetchViewerCounts(defaultGroup); // Pass the default group to start polling
-    
-    this.viewerService.viewers$.subscribe((viewerCounts) => {
-      this.updateViewerCounts(viewerCounts);
-    });
-  }
-  
+  constructor(private elementRef: ElementRef) {}
 
   toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;
@@ -93,25 +79,5 @@ export class SidebarComponent implements OnInit {
 
   isExpanded(item: any): boolean {
     return this.expandedItems.has(item);
-  }
-
-  private updateViewerCounts(viewerCounts: Record<string, number>): void {
-    this.data.forEach((item) => {
-      let totalViewers = 0;
-
-      // Update each submenu's viewer count
-      item.subMenu?.forEach((subItem) => {
-        const groupName = subItem.title.toLowerCase(); // Match with viewerCounts
-        subItem.viewers = viewerCounts[groupName] || 0;
-        totalViewers += subItem.viewers;
-      });
-
-      // Update total viewers at parent level
-      item.viewers = totalViewers;
-    });
-  }
-
-  onGroupSelection(group: string) {
-    this.viewerService.setActiveGroup(group); // Switch group dynamically
   }
 }

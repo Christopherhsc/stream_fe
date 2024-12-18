@@ -7,103 +7,111 @@ import { streamerData } from '../data/streamer-data';
 
 @Injectable({ providedIn: 'root' })
 export class ViewerService {
-  private clientId = environment.twitchClientId;
-  private accessToken = environment.twitchAccessToken;
+  private readonly clientId = environment.twitchClientId;
+  private readonly accessToken = environment.twitchAccessToken;
+  private readonly pollingInterval = 60000; // Poll every 60 seconds
+  private readonly twitchApiBaseUrl = 'https://api.twitch.tv/helix/streams';
 
-  private viewersSubject = new BehaviorSubject<Record<string, any>>({}); // Hold detailed streamer data
+  private viewersSubject = new BehaviorSubject<Record<string, any>>({});
   viewers$ = this.viewersSubject.asObservable();
 
-  private currentGroup: string | null = null; // Active group for polling
-  private pollingSubscription: Subscription | null = null; // Track polling subscription
+  private currentGroup: string | null = null;
+  private pollingSubscription: Subscription | null = null;
 
   constructor(private http: HttpClient) {}
 
   /**
-   * Start polling viewer counts with an immediate fetch.
+   * Fetch and continuously update viewer data for the selected group.
    */
-  fetchViewerCounts(group: string | null): void {
+  fetchViewerData(group: string | null): void {
     if (!group) {
-      this.stopPolling(); // Stop polling if no valid group
+      this.stopPolling();
       return;
     }
 
     if (this.currentGroup === group) {
-      console.log('Polling already running for group:', group);
+      console.log(`[ViewerService] Polling already active for group: ${group}`);
       return;
     }
 
-    console.log('Starting polling for group:', group);
-
-    this.stopPolling(); // Stop any existing polling
+    console.log(`[ViewerService] Starting polling for group: ${group}`);
+    this.stopPolling();
     this.currentGroup = group;
 
-    this.pollingSubscription = interval(60000)
+    this.pollingSubscription = interval(this.pollingInterval)
       .pipe(
         startWith(0),
-        switchMap(() => this.getViewerCounts())
+        switchMap(() => this.getViewerData())
       )
       .subscribe((viewerData) => {
         this.viewersSubject.next(viewerData);
-        const onlineStreamersCount = Object.keys(viewerData).length;
-        console.log('Updated Viewer Data:', viewerData);
-        console.log('Length of viewer data:', onlineStreamersCount);
+        console.log(`[ViewerService] Viewer data updated:`, viewerData);
+        console.log(
+          `[ViewerService] Online streamers count: ${Object.keys(viewerData).length}`
+        );
       });
   }
 
   /**
-   * Stop polling viewer counts.
+   * Stop the polling process.
    */
   stopPolling(): void {
     if (this.pollingSubscription) {
       this.pollingSubscription.unsubscribe();
       this.pollingSubscription = null;
-      console.log('Polling stopped.');
+      console.log('[ViewerService] Polling stopped.');
     }
     this.currentGroup = null;
   }
 
   /**
-   * Fetch viewer counts for streamers in the current group.
+   * Fetch viewer data for the current group.
    */
-  private getViewerCounts() {
+  private getViewerData() {
     const streamerNames = this.getStreamersForGroup(this.currentGroup!);
 
     if (!streamerNames.length) {
-      console.warn('No streamers found for group:', this.currentGroup);
+      console.warn(`[ViewerService] No streamers found for group: ${this.currentGroup}`);
       return of({});
     }
 
-    const url = `https://api.twitch.tv/helix/streams?user_login=${streamerNames.join(
-      '&user_login='
-    )}`;
+    const url = `${this.twitchApiBaseUrl}?user_login=${streamerNames.join('&user_login=')}`;
 
-    return this.http.get<any>(url, {
-      headers: {
-        'Client-ID': this.clientId,
-        Authorization: `Bearer ${this.accessToken}`,
-      },
-    }).pipe(
-      switchMap((response) => {
-        const liveStreamers: Record<string, any> = {};
-
-        response.data.forEach((stream: any) => {
-          if (stream.type === 'live') {
-            liveStreamers[stream.user_name] = {
-              viewer_count: stream.viewer_count,
-              thumbnail_url: stream.thumbnail_url,
-              title: stream.title,
-              started_at: stream.started_at,
-            };
-          }
-        });
-
-        return [liveStreamers];
+    return this.http
+      .get<any>(url, {
+        headers: {
+          'Client-ID': this.clientId,
+          Authorization: `Bearer ${this.accessToken}`,
+        },
       })
-    );
+      .pipe(
+        switchMap((response) => {
+          const liveStreamers = this.mapLiveStreamers(response.data);
+          return [liveStreamers];
+        })
+      );
   }
 
   /**
-   * Get streamers dynamically based on the selected group.
+   * Map API response data to a structured object.
+   */
+  private mapLiveStreamers(data: any[]): Record<string, any> {
+    const liveStreamers: Record<string, any> = {};
+    data.forEach((stream: any) => {
+      if (stream.type === 'live') {
+        liveStreamers[stream.user_name] = {
+          viewer_count: stream.viewer_count,
+          thumbnail_url: stream.thumbnail_url,
+          title: stream.title,
+          started_at: stream.started_at,
+        };
+      }
+    });
+    return liveStreamers;
+  }
+
+  /**
+   * Get a list of streamers for the specified group.
    */
   private getStreamersForGroup(group: string): string[] {
     const groupData = streamerData.find((g) => g.group === group);
@@ -111,9 +119,9 @@ export class ViewerService {
   }
 
   /**
-   * Set the active group for fetching streamers.
+   * Set the active group for fetching streamer data.
    */
   setActiveGroup(group: string): void {
-    this.fetchViewerCounts(group); // Dynamically start polling for the selected group
+    this.fetchViewerData(group);
   }
 }
