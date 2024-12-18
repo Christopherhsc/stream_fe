@@ -18,7 +18,7 @@ export const sidebarData = [
         title: 'Method',
         iconImage: getRandomImage(),
         viewers: 0,
-        url: '/dashboard/stats'
+        url: '/method'
       },
     ],
   },

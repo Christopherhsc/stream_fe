@@ -74,4 +74,13 @@ export const streamerData = [
       { id: '69', name: 'cdewx' },
     ],
   },
+  {
+    _id: 'streamersMethod123',
+    group: 'Method',
+    streamers: [
+      { id: '1', name: 'PirateSoftware' },
+      { id: '2', name: 'Xaryu' },
+      { id: '3', name: 'summit1g' },
+    ],
+  },
 ];

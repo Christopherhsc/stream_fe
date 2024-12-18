@@ -42,11 +42,14 @@ export class SidebarComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.viewerService.fetchViewerCounts();
+    const defaultGroup = this.data[0]?.subMenu?.[0]?.title || null; // Select the first group's title as default
+    this.viewerService.fetchViewerCounts(defaultGroup); // Pass the default group to start polling
+    
     this.viewerService.viewers$.subscribe((viewerCounts) => {
       this.updateViewerCounts(viewerCounts);
     });
   }
+  
 
   toggleSidebar(): void {
     this.isCollapsed = !this.isCollapsed;

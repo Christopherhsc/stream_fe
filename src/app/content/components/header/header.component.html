@@ -18,9 +18,14 @@
     <span
       *ngIf="headerData?.viewers !== null && headerData?.viewers !== undefined"
       class="header-viewers"
+      [@countChange]="headerData?.viewers"
     >
       {{ headerData?.viewers }}
       <mat-icon>visibility</mat-icon>
+    </span>
+    <span class="header-viewers" [@countChange]="onlineStreamersCount">
+      {{ onlineStreamersCount }} Streamers Online
+      <mat-icon>groups</mat-icon>
     </span>
   </div>
 </div>

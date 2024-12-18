@@ -1,26 +1,25 @@
 <div class="streams" [ngStyle]="{ 'background-color': backgroundColor }">
+  <div *ngIf="isLoading" class="loading">Loading streamers...</div>
   <!-- Controls -->
   <div class="controls">
     <button (click)="sortByViewers()">Sort by Viewers</button>
   </div>
 
   <!-- Grid of Streamers -->
-  <div *ngIf="filteredStreamers.length > 0; else noStreamers">
+  <div *ngIf="!isLoading && filteredStreamers.length > 0; else noStreamers">
     <div class="grid-container">
       <div
         *ngFor="let streamer of filteredStreamers; trackBy: trackByName"
         class="streamer"
       >
-        <!-- Twitch Stream Embed -->
         <iframe
-        [src]="streamer.embedUrl"
-        height="270"
-        width="480"
-        frameborder="0"
-        allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
-        allowfullscreen
-      ></iframe>   
-        <!-- Streamer Details -->
+          [src]="streamer.embedUrl"
+          height="270"
+          width="480"
+          frameborder="0"
+          allow="fullscreen; autoplay; encrypted-media; picture-in-picture"
+          allowfullscreen
+        ></iframe>
         <div class="details">
           <a target="_blank">{{ streamer.name }}</a>
           <span>Viewers: {{ streamer.viewers }}</span>
@@ -29,7 +28,6 @@
     </div>
   </div>
 
-  <!-- No Streamers Fallback -->
   <ng-template #noStreamers>
     <span>No streamers available.</span>
   </ng-template>

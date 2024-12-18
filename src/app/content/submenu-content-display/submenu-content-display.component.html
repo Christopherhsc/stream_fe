@@ -7,8 +7,9 @@
 
   <!-- Pass background color and streamers list to app-streams -->
   <app-streams
-    [backgroundColor]="backgroundColor"
-    [streamers]="streamsData"
-    (totalViewers)="onTotalViewersUpdate($event)"
-  ></app-streams>
+  [backgroundColor]="backgroundColor"
+  [filteredStreamers]="filteredStreamers"
+  [isLoading]="isLoading"
+  (totalViewers)="onTotalViewersUpdate($event)"
+></app-streams>
 </div>

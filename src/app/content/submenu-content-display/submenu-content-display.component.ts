@@ -2,11 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { sidebarData } from '../../shared/data/sidebar-data';
-import { CommonModule } from '@angular/common';
-import { MatIconModule } from '@angular/material/icon';
+import { streamerData } from '../../shared/data/streamer-data';
+import { ViewerService } from '../../shared/services/viewer.service';
 import { HeaderComponent } from '../components/header/header.component';
 import { StreamsComponent } from '../components/streams/streams.component';
-import { streamerData } from '../../shared/data/streamer-data';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-submenu-content-display',
@@ -20,10 +22,21 @@ export class SubmenuContentDisplayComponent implements OnInit {
     title: string;
     viewers: number | null;
   } | null = null;
-  streamsData: Array<{ name: string }> = [];
+
+  streamsData: Array<{ name: string }> = []; // Raw streamers data
+  filteredStreamers: Array<{
+    name: string;
+    viewers: number;
+    embedUrl: SafeResourceUrl;
+  }> = [];
+  isLoading = true; // Track loading state
   backgroundColor: string = 'rgb(44, 44, 44)'; // Default background color
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private viewerService: ViewerService,
+    private sanitizer: DomSanitizer
+  ) {}
 
   ngOnInit(): void {
     this.router.events
@@ -35,7 +48,6 @@ export class SubmenuContentDisplayComponent implements OnInit {
   }
 
   updateComponentData(url: string): void {
-    // Find matching submenu item in sidebarData
     const matchedItem = sidebarData
       .flatMap((item) => item.subMenu || [])
       .find((subItem) => subItem.url === url);
@@ -48,20 +60,86 @@ export class SubmenuContentDisplayComponent implements OnInit {
         viewers: matchedItem.viewers || null,
       };
 
-      // Find corresponding streamers based on the matched group title
+      // Get streamers for the matched group
       const matchedStreamers = streamerData.find(
         (data) => data.group === matchedItem.title
       );
       this.streamsData = matchedStreamers ? matchedStreamers.streamers : [];
+
+      // Fetch viewer counts for the group
+      this.isLoading = true;
+      this.viewerService.fetchViewerCounts(matchedItem.title);
+      this.viewerService.viewers$.subscribe((viewerData) => {
+        this.updateFilteredStreamers(viewerData);
+
+        // Calculate total viewers
+        const totalViewers = this.filteredStreamers.reduce(
+          (sum, streamer) => sum + streamer.viewers,
+          0
+        );
+        if (this.headerData) this.headerData.viewers = totalViewers;
+
+        this.isLoading = false;
+      });
     } else {
-      // Fallback when no match is found
+      // Fallback when no matching URL
       this.headerData = {
         headerImage: '/assets/fallback.jpg',
         title: 'Welcome to Streamers World',
         viewers: null,
       };
       this.streamsData = [];
+      this.filteredStreamers = [];
+      this.viewerService.stopPolling();
     }
+  }
+
+  updateFilteredStreamers(viewerData: Record<string, any>): void {
+    // Update existing streamers in place
+    this.filteredStreamers.forEach((streamer) => {
+      const liveData = viewerData[streamer.name.toLowerCase()];
+      if (liveData) {
+        streamer.viewers = liveData.viewer_count; // Update viewer count
+      } else {
+        streamer.viewers = 0; // Mark streamer as offline
+      }
+    });
+
+    // Remove offline streamers
+    this.filteredStreamers = this.filteredStreamers.filter(
+      (streamer) => streamer.viewers > 0
+    );
+
+    // Add new streamers
+    const existingStreamerNames = new Set(
+      this.filteredStreamers.map((streamer) => streamer.name.toLowerCase())
+    );
+    const newStreamers = this.streamsData
+      .filter((streamer) => !existingStreamerNames.has(streamer.name.toLowerCase()))
+      .map((streamer) => {
+        const liveData = viewerData[streamer.name.toLowerCase()];
+        if (liveData) {
+          return {
+            ...streamer,
+            viewers: liveData.viewer_count,
+            embedUrl: this.getTwitchEmbedUrl(streamer.name),
+          };
+        }
+        return null;
+      })
+      .filter((streamer) => streamer !== null) as Array<{
+      name: string;
+      viewers: number;
+      embedUrl: SafeResourceUrl;
+    }>;
+
+    this.filteredStreamers.push(...newStreamers);
+  }
+
+  getTwitchEmbedUrl(channelName: string): SafeResourceUrl {
+    const domain = window.location.hostname;
+    const embedUrl = `https://player.twitch.tv/?channel=${channelName}&parent=${domain}&muted=true`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
   }
 
   onDominantColorChange(color: string): void {
@@ -70,7 +148,7 @@ export class SubmenuContentDisplayComponent implements OnInit {
 
   onTotalViewersUpdate(totalViewers: number): void {
     if (this.headerData) {
-      this.headerData.viewers = totalViewers; // Update the viewers dynamically
+      this.headerData.viewers = totalViewers; // Update viewers dynamically
     }
   }
 }
