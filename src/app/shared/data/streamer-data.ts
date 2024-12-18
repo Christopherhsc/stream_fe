@@ -81,6 +81,7 @@ export const streamerData = [
       { id: '1', name: 'Guzu' },
       { id: '2', name: 'Xaryu' },
       { id: '3', name: 'summit1g' },
+      { id: '6', name: 'g1ku' },
     ],
   },
 ];

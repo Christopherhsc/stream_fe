@@ -5,6 +5,7 @@
       <div
         *ngFor="let streamer of filteredStreamers; trackBy: trackByName"
         class="streamer"
+        [ngStyle]="{ 'background-color': contrastColor, 'color': backgroundColor }"
       >
         <iframe
           [src]="streamer.embedUrl"

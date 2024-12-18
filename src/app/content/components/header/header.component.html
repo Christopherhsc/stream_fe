@@ -14,18 +14,28 @@
   ></div>
 
   <div class="header-content">
-    <span class="header-title">{{ headerData?.title || "Default Title" }}</span>
+    <span
+      class="header-title"
+      [ngStyle]="{ color: localContrastColor }"
+    >
+      {{ headerData?.title || "Default Title" }}
+    </span>
     <span
       *ngIf="headerData?.viewers !== null && headerData?.viewers !== undefined"
       class="header-viewers"
       [@countChange]="headerData?.viewers"
+      [ngStyle]="{ color: localContrastColor }"
     >
       {{ headerData?.viewers }}
-      <mat-icon>visibility</mat-icon>
+      <mat-icon [ngStyle]="{ color: localContrastColor }">visibility</mat-icon>
     </span>
-    <span class="header-viewers" [@countChange]="onlineStreamersCount">
-      {{ onlineStreamersCount }} Streamers Online
-      <mat-icon>groups</mat-icon>
+    <span
+      class="header-viewers"
+      [@countChange]="onlineStreamersCount"
+      [ngStyle]="{ color: localContrastColor }"
+    >
+      {{ onlineStreamersCount }} Online
+      <mat-icon [ngStyle]="{ color: localContrastColor }">groups</mat-icon>
     </span>
   </div>
 </div>

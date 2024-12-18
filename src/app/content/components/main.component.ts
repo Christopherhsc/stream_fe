@@ -31,6 +31,7 @@ export class Maincomponent implements OnInit {
   }> = [];
   isLoading = true; // Track loading state
   backgroundColor: string = 'rgb(44, 44, 44)'; // Default background color
+  contrastColor: string = 'rgb(255, 255, 255)' // Default contrast color
   currentSort: 'viewers' | null = null;
 
   constructor(
@@ -142,6 +143,10 @@ export class Maincomponent implements OnInit {
 
   onDominantColorChange(color: string): void {
     this.backgroundColor = color; // Update the background color dynamically
+  }
+
+  onContrastColorChange(color: string): void {
+    this.contrastColor = color
   }
 
   onTotalViewersUpdate(totalViewers: number): void {

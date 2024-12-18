@@ -3,11 +3,13 @@
   <app-header
     [headerData]="headerData"
     (dominantColor)="onDominantColorChange($event)"
+    (contrastColor)="onContrastColorChange($event)"
   ></app-header>
 
   <!-- Pass background color and streamers list to app-streams -->
   <app-streams
   [backgroundColor]="backgroundColor"
+  [contrastColor]="contrastColor"
   [filteredStreamers]="filteredStreamers"
   [isLoading]="isLoading"
   (totalViewers)="onTotalViewersUpdate($event)"

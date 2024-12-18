@@ -18,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
 })
 export class StreamsComponent {
   @Input() backgroundColor: string = 'rgb(44, 44, 44)';
+  @Input() contrastColor: string = 'rgb(255, 255, 255)'
   @Input() filteredStreamers: Array<{
     name: string;
     viewers: number;
@@ -28,6 +29,8 @@ export class StreamsComponent {
   currentSort: 'viewers' | null = null;
 
   trackByName(index: number, streamer: { name: string }): string {
+    console.log(this.backgroundColor)
+    console.log(this.contrastColor)
     return streamer.name
   }
 }

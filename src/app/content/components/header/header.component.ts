@@ -40,8 +40,11 @@ export class HeaderComponent implements OnInit, OnChanges {
   } | null = null;
 
   @Output() dominantColor = new EventEmitter<string>();
+  @Output() contrastColor = new EventEmitter<string>(); // Emit contrast color
+
   localDominantColor: string = 'rgba(0, 0, 0, 1)';
-  onlineStreamersCount: number = 0
+  localContrastColor: string = 'rgb(255, 255, 255)'
+  onlineStreamersCount: number = 0;
 
   constructor(private viewerService: ViewerService) {}
 
@@ -67,15 +70,28 @@ export class HeaderComponent implements OnInit, OnChanges {
     const image = new Image();
     image.crossOrigin = 'Anonymous'; // Required for cross-origin images
     image.src = this.headerData?.headerImage || '/assets/fallback.jpg';
-
+  
     image.onload = () => {
       const colorThief = new ColorThief();
       const color = colorThief.getColor(image); // Returns [R, G, B]
       const rgb = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
       const rgba = `rgba(${color[0]}, ${color[1]}, ${color[2]}, 1)`; // Alpha value is 1 (fully opaque)
-
-      this.dominantColor.emit(rgb); // Emit for external components
+  
       this.localDominantColor = rgba; // Store locally for gradient
+      this.dominantColor.emit(rgb); // Emit dominant color for external components
+  
+      // Calculate and store contrast color
+      const contrastRgb = this.calculateContrastColor(color);
+      this.localContrastColor = contrastRgb; // Store locally for the template
+      this.contrastColor.emit(contrastRgb); // Emit contrast color for external components
     };
+  }
+  
+
+  private calculateContrastColor([r, g, b]: [number, number, number]): string {
+    const contrastR = 255 - r;
+    const contrastG = 255 - g;
+    const contrastB = 255 - b;
+    return `rgb(${contrastR}, ${contrastG}, ${contrastB})`;
   }
 }
