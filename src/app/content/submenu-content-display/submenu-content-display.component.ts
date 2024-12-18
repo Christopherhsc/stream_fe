@@ -3,7 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { sidebarData } from '../../shared/data/sidebar-data';
 import { streamerData } from '../../shared/data/streamer-data';
-import { ViewerService } from '../../shared/services/viewer.service';
+import { ViewerService } from '../../shared/services/streamerData.service';
 import { HeaderComponent } from '../components/header/header.component';
 import { StreamsComponent } from '../components/streams/streams.component';
 import { CommonModule } from '@angular/common';
@@ -31,6 +31,7 @@ export class SubmenuContentDisplayComponent implements OnInit {
   }> = [];
   isLoading = true; // Track loading state
   backgroundColor: string = 'rgb(44, 44, 44)'; // Default background color
+  currentSort: 'viewers' | null = null;
 
   constructor(
     private router: Router,
@@ -95,46 +96,43 @@ export class SubmenuContentDisplayComponent implements OnInit {
   }
 
   updateFilteredStreamers(viewerData: Record<string, any>): void {
-    // Update existing streamers in place
+    const existingStreamerMap = new Map(
+      this.filteredStreamers.map((streamer) => [streamer.name, streamer]) 
+    );
+  
+    // Update viewer counts for existing streamers
     this.filteredStreamers.forEach((streamer) => {
-      const liveData = viewerData[streamer.name.toLowerCase()];
+      const liveData = viewerData[streamer.name];
       if (liveData) {
         streamer.viewers = liveData.viewer_count; // Update viewer count
       } else {
         streamer.viewers = 0; // Mark streamer as offline
       }
     });
-
+  
     // Remove offline streamers
     this.filteredStreamers = this.filteredStreamers.filter(
       (streamer) => streamer.viewers > 0
     );
-
-    // Add new streamers
-    const existingStreamerNames = new Set(
-      this.filteredStreamers.map((streamer) => streamer.name.toLowerCase())
-    );
-    const newStreamers = this.streamsData
-      .filter((streamer) => !existingStreamerNames.has(streamer.name.toLowerCase()))
-      .map((streamer) => {
-        const liveData = viewerData[streamer.name.toLowerCase()];
-        if (liveData) {
-          return {
-            ...streamer,
-            viewers: liveData.viewer_count,
-            embedUrl: this.getTwitchEmbedUrl(streamer.name),
-          };
-        }
-        return null;
-      })
-      .filter((streamer) => streamer !== null) as Array<{
-      name: string;
-      viewers: number;
-      embedUrl: SafeResourceUrl;
-    }>;
-
+  
+    // Add new streamers from the fetched data
+    const newStreamers = Object.entries(viewerData)
+      .filter(([key]) => !existingStreamerMap.has(key)) 
+      .map(([key, liveData]: [string, any]) => ({
+        name: key,
+        viewers: liveData.viewer_count,
+        thumbnail_url: liveData.thumbnail_url,
+        title: liveData.title,
+        embedUrl: this.getTwitchEmbedUrl(key),
+      }));
+  
     this.filteredStreamers.push(...newStreamers);
-  }
+  
+    // Reapply the current sort if necessary
+    if (this.currentSort === 'viewers') {
+      this.filteredStreamers.sort((a, b) => b.viewers - a.viewers);
+    }
+  }  
 
   getTwitchEmbedUrl(channelName: string): SafeResourceUrl {
     const domain = window.location.hostname;

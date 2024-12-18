@@ -2,16 +2,16 @@ import {
   ChangeDetectionStrategy,
   Component,
   Input,
-  OnInit,
   Output,
   EventEmitter,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SafeResourceUrl } from '@angular/platform-browser';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-streams',
-  imports: [CommonModule],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './streams.component.html',
   styleUrls: ['./streams.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -25,14 +25,9 @@ export class StreamsComponent {
   }> = [];
   @Input() isLoading: boolean = true;
   @Output() totalViewers = new EventEmitter<number>();
-
-  sortByViewers(): void {
-    this.filteredStreamers = [...this.filteredStreamers].sort(
-      (a, b) => b.viewers - a.viewers
-    );
-  }
+  currentSort: 'viewers' | null = null;
 
   trackByName(index: number, streamer: { name: string }): string {
-    return streamer.name; // Use a unique property to track DOM updates
+    return streamer.name
   }
 }

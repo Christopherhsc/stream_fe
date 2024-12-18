@@ -88,7 +88,7 @@ export class ViewerService {
 
         response.data.forEach((stream: any) => {
           if (stream.type === 'live') {
-            liveStreamers[stream.user_name.toLowerCase()] = {
+            liveStreamers[stream.user_name] = {
               viewer_count: stream.viewer_count,
               thumbnail_url: stream.thumbnail_url,
               title: stream.title,
@@ -107,7 +107,7 @@ export class ViewerService {
    */
   private getStreamersForGroup(group: string): string[] {
     const groupData = streamerData.find((g) => g.group === group);
-    return groupData ? groupData.streamers.map((s) => s.name.toLowerCase()) : [];
+    return groupData ? groupData.streamers.map((s) => s.name) : [];
   }
 
   /**

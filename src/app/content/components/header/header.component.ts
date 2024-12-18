@@ -10,7 +10,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import ColorThief from 'colorthief';
-import { ViewerService } from '../../../shared/services/viewer.service';
+import { ViewerService } from '../../../shared/services/streamerData.service';
 import { trigger, transition, style, animate } from '@angular/animations';
 
 @Component({

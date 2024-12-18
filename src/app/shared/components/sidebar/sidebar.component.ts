@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { sidebarData } from '../../data/sidebar-data';
 import { RouterModule } from '@angular/router';
 import { trigger, transition, style, animate } from '@angular/animations';
-import { ViewerService } from '../../services/viewer.service';
+import { ViewerService } from '../../services/streamerData.service';
 
 @Component({
   selector: 'app-sidebar',

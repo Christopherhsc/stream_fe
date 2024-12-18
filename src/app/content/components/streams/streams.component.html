@@ -1,10 +1,4 @@
 <div class="streams" [ngStyle]="{ 'background-color': backgroundColor }">
-  <div *ngIf="isLoading" class="loading">Loading streamers...</div>
-  <!-- Controls -->
-  <div class="controls">
-    <button (click)="sortByViewers()">Sort by Viewers</button>
-  </div>
-
   <!-- Grid of Streamers -->
   <div *ngIf="!isLoading && filteredStreamers.length > 0; else noStreamers">
     <div class="grid-container">
@@ -22,7 +16,7 @@
         ></iframe>
         <div class="details">
           <a target="_blank">{{ streamer.name }}</a>
-          <span>Viewers: {{ streamer.viewers }}</span>
+          <span> {{ streamer.viewers }} <mat-icon>visibility</mat-icon></span>
         </div>
       </div>
     </div>
