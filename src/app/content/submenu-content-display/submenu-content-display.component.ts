@@ -20,7 +20,7 @@ export class SubmenuContentDisplayComponent implements OnInit {
     title: string;
     viewers: number | null;
   } | null = null;
-  streamsData: Array<{ name: string; image: string; }> = [];
+  streamsData: Array<{ name: string }> = [];
   backgroundColor: string = 'rgb(44, 44, 44)'; // Default background color
 
   constructor(private router: Router) {}

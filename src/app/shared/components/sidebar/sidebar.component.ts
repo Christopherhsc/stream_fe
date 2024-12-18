@@ -1,4 +1,10 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { sidebarData } from '../../data/sidebar-data';
@@ -30,13 +36,13 @@ export class SidebarComponent implements OnInit {
   data = sidebarData;
   isCollapsed = false;
 
-  constructor(private elementRef: ElementRef, private viewerService: ViewerService) {}
+  constructor(
+    private elementRef: ElementRef,
+    private viewerService: ViewerService
+  ) {}
 
   ngOnInit(): void {
-    const allStreamers = this.getAllStreamers();
-    this.viewerService.fetchViewerCounts(allStreamers);
-
-    // Subscribe to viewer counts
+    this.viewerService.fetchViewerCounts();
     this.viewerService.viewers$.subscribe((viewerCounts) => {
       this.updateViewerCounts(viewerCounts);
     });
@@ -86,28 +92,23 @@ export class SidebarComponent implements OnInit {
     return this.expandedItems.has(item);
   }
 
-  private getAllStreamers(): string[] {
-    // Collect all streamer names from submenus
-    return this.data.flatMap((item) =>
-      item.subMenu?.flatMap((subItem) => subItem.title) || []
-    );
-  }
   private updateViewerCounts(viewerCounts: Record<string, number>): void {
     this.data.forEach((item) => {
       let totalViewers = 0;
-  
-      // Update subMenu viewer counts and aggregate to parent
+
+      // Update each submenu's viewer count
       item.subMenu?.forEach((subItem) => {
-        const titleKey = subItem.title.trim().toLowerCase(); // Normalize title
-        const count = viewerCounts[titleKey] || 0; // Fetch viewer count
-        subItem.viewers = count;
-        totalViewers += count;
+        const groupName = subItem.title.toLowerCase(); // Match with viewerCounts
+        subItem.viewers = viewerCounts[groupName] || 0;
+        totalViewers += subItem.viewers;
       });
-  
-      item.viewers = totalViewers; // Update total viewers for parent item
+
+      // Update total viewers at parent level
+      item.viewers = totalViewers;
     });
-  
-    console.log('Updated Viewer Counts:', this.data);
   }
-  
+
+  onGroupSelection(group: string) {
+    this.viewerService.setActiveGroup(group); // Switch group dynamically
+  }
 }

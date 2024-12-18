@@ -5,7 +5,7 @@ export const sidebarData = [
   {
     title: 'World of Warcraft',
     image: getRandomImage(),
-    viewers: 47,
+    viewers: 0,
     subMenu: [
       {
         title: 'OnlyFangs',

@@ -31,7 +31,6 @@
   }
   
   .viewers-count {
-    margin-top: 0.5rem;
     font-size: 0.9rem;
     color: #ccc;
   }
@@ -55,6 +54,11 @@
     padding: 1rem;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, background-color 0.3s ease;
+
+    .details{
+      display: flex;
+      flex-direction: column;
+    }
 
     &:hover {
       transform: translateY(-5px); // Slight lift effect

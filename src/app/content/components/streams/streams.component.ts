@@ -10,10 +10,7 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
-import { interval, Observable, of, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
-import { environment } from '../../../../environments/environment';
+import { ViewerService } from '../../../shared/services/viewer.service';
 
 @Component({
   selector: 'app-streams',
@@ -24,109 +21,77 @@ import { environment } from '../../../../environments/environment';
 })
 export class StreamsComponent implements OnInit {
   @Input() backgroundColor: string = 'rgb(44, 44, 44)';
-  @Input() streamers: Array<{ name: string; image: string }> = [];
+  @Input() streamers: Array<{ name: string }> = [];
   @Output() totalViewers = new EventEmitter<number>();
 
   filteredStreamers: Array<{
     name: string;
-    image: string;
     viewers: number;
-    embedUrl: SafeResourceUrl;
+    embedUrl: SafeResourceUrl; // Embed URL remains fixed
   }> = [];
-
-  private clientId = environment.twitchClientId;
-  private accessToken = environment.twitchAccessToken;
-  private pollingSubscription: Subscription | null = null;
 
   constructor(
     private sanitizer: DomSanitizer,
-    private http: HttpClient,
+    private viewerService: ViewerService,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    // Initialize `filteredStreamers` with default data
     this.filteredStreamers = this.streamers.map((streamer) => ({
       ...streamer,
       viewers: 0,
       embedUrl: this.getTwitchEmbedUrl(streamer.name),
     }));
 
-    this.fetchViewerCounts().subscribe();
-    this.startPolling();
+    // Subscribe to viewer data updates
+    this.viewerService.fetchViewerCounts();
+    this.viewerService.viewers$.subscribe((viewerData) => {
+      // Update existing `filteredStreamers` in-place
+      this.filteredStreamers.forEach((streamer) => {
+        const liveData = viewerData[streamer.name.toLowerCase()];
+        if (liveData) {
+          streamer.viewers = liveData.viewer_count; // Update viewer count
+        } else {
+          streamer.viewers = 0; // Mark offline
+        }
+      });
+
+      // Remove offline streamers in place
+      this.filteredStreamers = this.filteredStreamers.filter(
+        (streamer) => streamer.viewers > 0
+      );
+
+      // Calculate and emit total viewers
+      const totalViewers = this.filteredStreamers.reduce(
+        (sum, streamer) => sum + streamer.viewers,
+        0
+      );
+      this.totalViewers.emit(totalViewers);
+
+      this.cdr.markForCheck();
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['streamers']?.currentValue) {
+      // Initialize filteredStreamers with embed URLs
       this.filteredStreamers = this.streamers.map((streamer) => ({
         ...streamer,
         viewers: 0,
-        embedUrl: this.getTwitchEmbedUrl(streamer.name),
+        embedUrl: this.getTwitchEmbedUrl(streamer.name), // Generate embed URL once
       }));
-      this.fetchViewerCounts().subscribe();
+
+      console.log('FILTERED STREAMERS (ON CHANGE)', this.filteredStreamers);
+
+      // Fetch viewer counts after initialization
+      this.viewerService.fetchViewerCounts();
     }
-  }
-
-  ngOnDestroy(): void {
-    this.stopPolling();
-  }
-
-  startPolling(): void {
-    this.pollingSubscription = interval(10000)
-      .pipe(switchMap(() => this.fetchViewerCounts()))
-      .subscribe();
-  }
-
-  stopPolling(): void {
-    this.pollingSubscription?.unsubscribe();
-  }
-
-  fetchViewerCounts(): Observable<any> {
-    if (!this.streamers?.length) return of(null);
-
-    const streamerNames = this.streamers
-      .map((s) => s.name.trim())
-      .filter(Boolean)
-      .join('&user_login=');
-
-    const url = `https://api.twitch.tv/helix/streams?user_login=${streamerNames}`;
-
-    return this.http
-      .get<any>(url, {
-        headers: {
-          'Client-ID': this.clientId,
-          Authorization: `Bearer ${this.accessToken}`,
-        },
-      })
-      .pipe(
-        switchMap((response) => {
-          const liveStreams = response?.data || [];
-
-          this.filteredStreamers.forEach((streamer) => {
-            const liveStream = liveStreams.find(
-              (s: any) =>
-                s.user_name.trim().toLowerCase() ===
-                  streamer.name.trim().toLowerCase() &&
-                s.game_name.toLowerCase() === 'world of warcraft' &&
-                s.type === 'live'
-            );
-            streamer.viewers = liveStream ? liveStream.viewer_count : 0;
-          });
-
-          const totalViewers = this.filteredStreamers.reduce(
-            (sum, streamer) => sum + (streamer.viewers || 0),
-            0
-          );
-          this.totalViewers.emit(totalViewers);
-          this.cdr.markForCheck();
-
-          return of(response);
-        })
-      );
   }
 
   getTwitchEmbedUrl(channelName: string): SafeResourceUrl {
     const domain = window.location.hostname;
-    const embedUrl = `https://player.twitch.tv/?channel=${channelName}&parent=${domain}`;
+    const embedUrl = `https://player.twitch.tv/?channel=${channelName}&parent=${domain}&muted=true`;
     return this.sanitizer.bypassSecurityTrustResourceUrl(embedUrl);
   }
 
@@ -137,6 +102,6 @@ export class StreamsComponent implements OnInit {
   }
 
   trackByName(index: number, streamer: { name: string }): string {
-    return streamer.name;
+    return streamer.name; // Prevent unnecessary DOM re-renders
   }
 }
